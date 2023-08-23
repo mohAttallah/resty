@@ -27,6 +27,7 @@ function App() {
         axios({
             method: props.method,
             url: props.url,
+            
         }).then(response => {
             setRespons(response.data);
             setLoading(false); // Stop loading

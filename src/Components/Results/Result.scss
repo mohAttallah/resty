@@ -1,11 +1,15 @@
 section {
     // background-color: #363636;
     color: #504f4f;
+    max-width: 90%;
 }
+
 .code-output {
-    //  background-color: #f4f4f4;
-     padding: 10px;
-     border-radius: 5px;
-     border: 1px solid #ddd;
-     color: #e90a0a;
- }
+    max-width: 90%;
+    margin: 0 auto;
+    overflow: 'auto';
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    color: #e90a0a;
+}
