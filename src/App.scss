@@ -41,6 +41,7 @@ body {
 
 
 .grid-section {
+
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -57,25 +58,26 @@ body {
     border-radius: 8px;
     border: 1px solid #ddd;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
     div {
-            /* Common div styles */
-            margin-bottom: 10px;
-            font-size: 16px;
-            color: #333;
-    
-            &:first-child {
-                /* Styling for the first child div */
-                font-weight: bold;
-            }
-    
-            &:last-child {
-                /* Styling for the last child div */
-                color: #3498db;
-            }
+        /* Common div styles */
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: #333;
+
+        &:first-child {
+            /* Styling for the first child div */
+            font-weight: bold;
         }
+
+        &:last-child {
+            /* Styling for the last child div */
+            color: #3498db;
+        }
+    }
 }
 
 .left-section {
     /* Container styles */
-    padding: 50px;
+    padding: 45px;
 }
