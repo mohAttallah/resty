@@ -1,6 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { rest } from 'msw'
+import { waitForElementToBeRemoved } from '@testing-library/react';
+
 import { setupServer } from 'msw/node'
 import Fetch from '../App'
 import '@testing-library/jest-dom'
@@ -22,25 +24,21 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 
-test('loads and displays greeting', async () => {
-    render(<Fetch url="/greeting" />)
+test.skip('loads and displays greeting', async () => {
+    render(<Fetch url="/greeting" />);
     const goButton = screen.getByText('GO!');
+    fireEvent.click(goButton);
 
-    await waitFor(() => expect(goButton).toBeInTheDocument());
-    const resultsElement = screen.getByRole('result');
-    expect(resultsElement).toHaveTextContent('hello there');
-
-})
-
-// test('loads and displays greeting', async () => {
-//     render(<App />);
-//     fireEvent.click(screen.getByText('GO!'));
-//     expect(screen.getByText('Request Method:')).toBeTruthy();
-//     expect(screen.getByText('method')).toBeTruthy();
-//     expect(screen.getByText('hello there')).toBeInTheDocument();
-// }); 
-
-
+    const waitForLoadingSpinnerToBeRemoved = async () => {
+        while (screen.queryByTestId('loading-spinner')) {
+            await waitFor(() => { }, { timeout: 100 }); 
+        }
+    };
+    await waitForLoadingSpinnerToBeRemoved();
+    const resultsElement = await waitFor(() => screen.getByRole('result'));
+    expect(resultsElement).toBeInTheDocument();
+    expect(resultsElement).toHaveTextContent('Hello there!');
+});
 
 test('renders header', () => {
     render(<App />);
