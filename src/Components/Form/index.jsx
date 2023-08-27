@@ -7,11 +7,24 @@ function Form(props) {
     const [active, setActiveStyle] = useState(null);
     const handleSubmit = e => {
         e.preventDefault();
-        const formData = {
-            method: selectedMethod,
-            url: e.target.url.value,
-        };
-        props.handleApiCall(formData);
+        console.log()
+        const urlValue = e.target.url ? e.target.url.value : '';
+        if (selectedMethod === "POST" || selectedMethod === "PUT") {
+            const formData = {
+                method: selectedMethod,
+                url: urlValue,
+                body: e.target.body.value
+            };
+            props.handleApiCall(formData);
+        } else {
+            const formData = {
+                method: selectedMethod,
+                url: urlValue,
+                body: ""
+            };
+            props.handleApiCall(formData);
+        }
+
     }
     // render body
     let bodyLabel = null;
