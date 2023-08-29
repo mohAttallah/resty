@@ -101,7 +101,6 @@ function App() {
 
     }, [state.reqParams])
 
-    console.log(state.respons)
 
     return (
         <React.Fragment>
