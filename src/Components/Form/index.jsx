@@ -1,24 +1,29 @@
 // import React from 'react';
-import React, { useState } from 'react';
+import { useReducer } from 'react';
 import './Form.scss';
 
+
+import { reducer, initialState } from './reducer';
+
+
 function Form(props) {
-    const [selectedMethod, setSelectedMethod] = useState('GET');
-    const [active, setActiveStyle] = useState(null);
+    const [state, dispatch] = useReducer(reducer, initialState);
+    console.log(state)
+
     const handleSubmit = e => {
         e.preventDefault();
         console.log()
         const urlValue = e.target.url ? e.target.url.value : '';
-        if (selectedMethod === "POST" || selectedMethod === "PUT") {
+        if (state.selectedMethod === "POST" || state.selectedMethod === "PUT") {
             const formData = {
-                method: selectedMethod,
+                method: state.selectedMethod,
                 url: urlValue,
                 body: e.target.body.value
             };
             props.handleApiCall(formData);
         } else {
             const formData = {
-                method: selectedMethod,
+                method: state.selectedMethod,
                 url: urlValue,
                 body: ""
             };
@@ -28,7 +33,8 @@ function Form(props) {
     }
     // render body
     let bodyLabel = null;
-    if (selectedMethod === "POST" || selectedMethod === "PUT") {
+    console.log("methode:",state.selectedMethod)
+    if (state.selectedMethod === "POST" || state.selectedMethod === "PUT") {
         bodyLabel = (
             <label className='gorgeous-label'>
                 <span>Body: </span>
@@ -41,14 +47,16 @@ function Form(props) {
         //first change deafult value Color 
         const deafultSelect = document.getElementById('get');
         deafultSelect.style.backgroundColor = 'white';
-        if (active) {
-            if (active !== e) {
-                active.target.style.backgroundColor = "white";
+        if (state.active) {
+            if (state.active !== e) {
+                state.active.target.style.backgroundColor = "white";
             }
         }
-        setSelectedMethod(e.target.textContent);
-        e.target.style.backgroundColor = "#3498db";
-        setActiveStyle(e);
+        console.log("dispatch",e.target.textContent)
+        dispatch({ type: 'SET_METHOD', payload: e.target.textContent });
+        console.log("ssssssss",e.target.textContent)
+        e.target.style.backgroundColor = '#3498db';
+        dispatch({ type: 'SET_STYLE', payload: e });
     }
 
 
