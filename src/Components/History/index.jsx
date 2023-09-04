@@ -23,6 +23,7 @@ export default function History(props) {
         url: "",
         methode: ""
     }
+    // const { url, method } = props.data || { url: '', method: '' };
 
     const { url, methode } = props.data;
     const [state, dispatch] = useReducer(reducer, initialState);
