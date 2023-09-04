@@ -6,55 +6,7 @@ import Footer from './Components/Footer';
 import Form from './Components/Form';
 import Results from './Components/Results';
 import History from './Components/History';
-
-const initialState = {
-    respons: {
-        headers: '',
-        data: '',
-    },
-    loading: false,
-    reqParams: {
-        method: '',
-        url: '',
-        body: '',
-    },
-};
-function reducer(state, action) {
-    switch (action.type) {
-        case 'SET_REQUEST_PARAMS':
-            return {
-                ...state,
-                reqParams: {
-                    method: action.payload.method,
-                    url: action.payload.url,
-                    body: action.payload.body,
-                },
-            };
-        case 'API_REQUEST_START':
-            return {
-                ...state,
-                loading: true,
-            };
-        case 'API_REQUEST_SUCCESS':
-            return {
-                ...state,
-                respons: {
-                    headers: action.payload.headers,
-                    data: action.payload.data,
-                },
-                loading: false,
-            };
-        case 'API_REQUEST_ERROR':
-            return {
-                ...state,
-                respons: 'Error',
-                loading: false,
-            };
-        default:
-            return state;
-    }
-}
-
+import { reducer, initialState } from './reducer';
 
 
 
@@ -63,6 +15,7 @@ function App() {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     function callApi(props) {
+        console.log(props)
         dispatch({ type: 'SET_REQUEST_PARAMS', payload: props });
     }
 
@@ -79,7 +32,8 @@ function App() {
                 data: body ? JSON.parse(body) : null
             }).then(response => {
                 //check if there is a headers on respons or not 
-                if (state.respons.headers && response.data) {
+                if (response.headers && response.data) {
+                    
                     dispatch({
                         type: 'API_REQUEST_SUCCESS',
                         payload: { headers: response.headers, data: response.data },
@@ -115,7 +69,7 @@ function App() {
                     <Results role="result" data={state.respons} loading={state.loading} />
                 </div>
                 <div>
-                    <History data={{
+                    <History handleApiCall={callApi}  data={{
                         url: state.reqParams.url,
                         methode: state.reqParams.method
                     }} />
