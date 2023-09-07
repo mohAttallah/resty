@@ -1,12 +1,10 @@
-import React from 'react';
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { rest } from 'msw'
-import { waitForElementToBeRemoved } from '@testing-library/react';
 
 import { setupServer } from 'msw/node'
 import Fetch from '../App'
 import '@testing-library/jest-dom'
-import { Form } from '../Components/Form';
 
 import App from '../App';
 const server = setupServer(
@@ -31,7 +29,7 @@ test.skip('loads and displays greeting', async () => {
 
     const waitForLoadingSpinnerToBeRemoved = async () => {
         while (screen.queryByTestId('loading-spinner')) {
-            await waitFor(() => { }, { timeout: 100 }); 
+            await waitFor(() => { }, { timeout: 100 });
         }
     };
     await waitForLoadingSpinnerToBeRemoved();

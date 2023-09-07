@@ -1,36 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Result.scss';
 
 function Results(props) {
+    const { loading, previousLink, nextLink } = props;
     const data = props.data.data;
-    console.log(data)
-    let length = 0;
-    let itemsPerPage = 1;
-
-    if (typeof data === "object") {
-        const keys = Object.keys(data);
-        length = keys.length;
-    } else if (Array.isArray(data)) {
-        length = data.length;
-    }
-
-
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(length / itemsPerPage);
+    const itemsPerPage = 1;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [data]);
+
+    //total pages is length / items 
+    const totalPages = Math.ceil(data.length / itemsPerPage);
 
     function handlePrev() {
-        if (currentPage > 1) {
+        if (currentPage > 1 && previousLink) {
             setCurrentPage(currentPage - 1);
         }
     }
 
     function handleNext() {
-        if (currentPage < totalPages) {
+        if (currentPage < totalPages && nextLink) {
             setCurrentPage(currentPage + 1);
         }
     }
 
-    if (props.loading === true) {
+    // Render loading state
+    if (loading === true) {
         return (
             <section>
                 <h4>Output: </h4>
@@ -39,33 +36,24 @@ function Results(props) {
         );
     } else {
         const startIndex = (currentPage - 1) * itemsPerPage;
-        let current = null;
-
-        if (Array.isArray(data)) {
-            current = data.slice(startIndex, startIndex + itemsPerPage);
-        } else if (typeof data === "object") {
-            const keys = Object.keys(data);
-            const slicedKeys = keys.slice(startIndex, startIndex + itemsPerPage);
-            current = {};
-            console.log(current)
-            for (const key of slicedKeys) {
-                current[key] = data[key];
-            }
-        }
-
+        const endIndex = startIndex + itemsPerPage;
+        const currentData = data.slice(startIndex, endIndex);
+        console.log(props)
         return (
             <>
                 <section>
                     <h2>Headers:</h2>
                     <pre className="code-output">{props.data ? JSON.stringify(props.data.headers, undefined, 2) : null}</pre>
                 </section>
+
                 <section>
                     <h2>Output:</h2>
-                    <pre className="code-output">{JSON.stringify(current, undefined, 2)}</pre>
-                    <button onClick={handlePrev} disabled={currentPage === 1}>
+                    <pre className="code-output">{JSON.stringify(currentData, undefined, 2)}</pre>
+
+                    <button onClick={handlePrev} disabled={!previousLink}>
                         Previous
                     </button>
-                    <button onClick={handleNext} disabled={currentPage === totalPages}>
+                    <button onClick={handleNext} disabled={!nextLink}>
                         Next
                     </button>
                 </section>
