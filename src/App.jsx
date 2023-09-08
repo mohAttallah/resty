@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
 import './App.scss';
 import Header from './Components/Header';
@@ -6,65 +6,21 @@ import Footer from './Components/Footer';
 import Form from './Components/Form';
 import Results from './Components/Results';
 import History from './Components/History';
-
-const initialState = {
-    respons: {
-        headers: '',
-        data: '',
-    },
-    loading: false,
-    reqParams: {
-        method: '',
-        url: '',
-        body: '',
-    },
-};
-
-function reducer(state, action) {
-    switch (action.type) {
-        case 'SET_REQUEST_PARAMS':
-            return {
-                ...state,
-                reqParams: {
-                    method: action.payload.method,
-                    url: action.payload.url,
-                    body: action.payload.body,
-                },
-            };
-        case 'API_REQUEST_START':
-            return {
-                ...state,
-                loading: true,
-            };
-        case 'API_REQUEST_SUCCESS':
-            return {
-                ...state,
-                respons: {
-                    headers: action.payload.headers,
-                    data: action.payload.data,
-                },
-                loading: false,
-            };
-        case 'API_REQUEST_ERROR':
-            return {
-                ...state,
-                respons: 'Error',
-                loading: false,
-            };
-        default:
-            return state;
-    }
-}
-
+import { reducer, initialState } from './reducer';
 
 
 
 function App() {
 
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [previousLink, setPreviousLink] = useState(null);
+    const [nextLink, setNextLink] = useState(null);
+
 
     function callApi(props) {
+        console.log(props)
         dispatch({ type: 'SET_REQUEST_PARAMS', payload: props });
+
     }
 
     useEffect(() => {
@@ -80,7 +36,18 @@ function App() {
                 data: body ? JSON.parse(body) : null
             }).then(response => {
                 //check if there is a headers on respons or not 
-                if (state.respons.headers && response.data) {
+                if (response.headers && response.data) {
+                    const nextLinkHeader = response.headers['link'];
+                    if (nextLinkHeader) {
+                        const links = parseLinkHeader(nextLinkHeader);
+                        console.log(links)
+                        setNextLink(links.next);
+                        setPreviousLink(links.first);
+                    } else {
+                        setNextLink(null);
+                        setPreviousLink(null);
+                    }
+
                     dispatch({
                         type: 'API_REQUEST_SUCCESS',
                         payload: { headers: response.headers, data: response.data },
@@ -102,6 +69,17 @@ function App() {
 
     }, [state.reqParams])
 
+    function parseLinkHeader(linkHeader) {
+        const links = {};
+        linkHeader.split(',').forEach(part => {
+            const section = part.split(';');
+            if (section.length !== 2) return;
+            const url = section[0].replace(/<(.*)>/, '$1').trim();
+            const rel = section[1].replace(/rel="(.*)"/, '$1').trim();
+            links[rel] = url;
+        });
+        return links;
+    }
 
     return (
         <React.Fragment>
@@ -113,10 +91,11 @@ function App() {
                     <div>URL: {state.reqParams.url}</div>
                 </div>
                 <div className="right-section">
-                    <Results role="result" data={state.respons} loading={state.loading} />
+                    <Results role="result" data={state.respons} loading={state.loading} previousLink={previousLink} nextLink={nextLink} />
+
                 </div>
                 <div>
-                    <History data={{
+                    <History handleApiCall={callApi} data={{
                         url: state.reqParams.url,
                         methode: state.reqParams.method
                     }} />

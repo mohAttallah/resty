@@ -23,6 +23,7 @@ export default function History(props) {
         url: "",
         methode: ""
     }
+    // const { url, method } = props.data || { url: '', method: '' };
 
     const { url, methode } = props.data;
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -32,6 +33,18 @@ export default function History(props) {
         });
     }, [props])
     const keys = Object.keys(localStorage);
+
+    const handleSendData = (url, methode) => {
+        const formData = {
+            method: methode,
+            url: url,
+            body: ""
+        };
+        props.handleApiCall(formData);
+
+        console.log('URL:', url);
+        console.log('Method:', methode);
+    };
 
     return (
         <section>
@@ -44,10 +57,14 @@ export default function History(props) {
                         <div key={key}>
                             <p>URL: {value.url}</p>
                             <p>Method: {value.methode}</p>
+                            <button onClick={() => handleSendData(value.url, value.methode)}>
+                                Fetch
+                            </button>
+                            <hr />
                         </div>
                     );
                 }
-                return null; 
+                return null;
             })}
         </section>
 
