@@ -2,7 +2,7 @@
 **Author:** Mohammad Attallah
 
 ---
-Deploy URl : [Deploy URL ](https://chipper-banoffee-1028cf.netlify.app/)
+Deploy URl : [Deploy URL ](https://main--splendorous-faun-ae45d1.netlify.app/)
 
 ### Description 
 A browser based API testing tool, Using **React**
