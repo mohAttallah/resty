@@ -11,8 +11,12 @@ function Results(props) {
         setCurrentPage(1);
     }, [data]);
 
+    let totalPages
+    //check  data type
+    if (Array.isArray(data)) {
+        totalPages = Math.ceil(data.length / itemsPerPage);
+    }
     //total pages is length / items 
-    const totalPages = Math.ceil(data.length / itemsPerPage);
 
     function handlePrev() {
         if (currentPage > 1 && previousLink) {
@@ -25,6 +29,7 @@ function Results(props) {
             setCurrentPage(currentPage + 1);
         }
     }
+    let currentData = null;
 
     // Render loading state
     if (loading === true) {
@@ -34,32 +39,35 @@ function Results(props) {
                 <pre className="code-output">Loading...</pre>
             </section>
         );
-    } else {
+    } else if (Array.isArray(data)) {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        const currentData = data.slice(startIndex, endIndex);
-        console.log(props)
-        return (
-            <>
-                <section>
-                    <h2>Headers:</h2>
-                    <pre className="code-output">{props.data ? JSON.stringify(props.data.headers, undefined, 2) : null}</pre>
-                </section>
+        currentData = data.slice(startIndex, endIndex);
 
-                <section>
-                    <h2>Output:</h2>
-                    <pre className="code-output">{JSON.stringify(currentData, undefined, 2)}</pre>
-
-                    <button onClick={handlePrev} disabled={!previousLink}>
-                        Previous
-                    </button>
-                    <button onClick={handleNext} disabled={!nextLink}>
-                        Next
-                    </button>
-                </section>
-            </>
-        );
+    } else {
+        currentData = data
     }
+    return (
+        <>
+            <section>
+                <h2>Headers:</h2>
+                <pre className="code-output">{props.data ? JSON.stringify(props.data.headers, undefined, 2) : null}</pre>
+            </section>
+
+            <section>
+                <h2>Output:</h2>
+                <pre className="code-output">{JSON.stringify(currentData, undefined, 2)}</pre>
+
+                <button onClick={handlePrev} disabled={!previousLink}>
+                    Previous
+                </button>
+                <button onClick={handleNext} disabled={!nextLink}>
+                    Next
+                </button>
+            </section>
+        </>
+    );
 }
+
 
 export default Results;

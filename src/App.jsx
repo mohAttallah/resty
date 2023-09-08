@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import axios from 'axios';
 import './App.scss';
 import Header from './Components/Header';
@@ -13,14 +13,11 @@ import { reducer, initialState } from './reducer';
 function App() {
 
     const [state, dispatch] = useReducer(reducer, initialState);
-    const [previousLink, setPreviousLink] = useState(null);
-    const [nextLink, setNextLink] = useState(null);
+    const { reqParams, respons, loading, previousLink, nextLink } = state
 
 
     function callApi(props) {
-        console.log(props)
         dispatch({ type: 'SET_REQUEST_PARAMS', payload: props });
-
     }
 
     useEffect(() => {
@@ -40,14 +37,15 @@ function App() {
                     const nextLinkHeader = response.headers['link'];
                     if (nextLinkHeader) {
                         const links = parseLinkHeader(nextLinkHeader);
-                        console.log(links)
-                        setNextLink(links.next);
-                        setPreviousLink(links.first);
-                    } else {
-                        setNextLink(null);
-                        setPreviousLink(null);
+                        dispatch({
+                            type: 'SET_NEXT_LINK',
+                            payload: { nextLink: links.next },
+                        });
+                        dispatch({
+                            type: 'SET_PREVIOUS_LINK',
+                            payload: { previousLink: links.first },
+                        });
                     }
-
                     dispatch({
                         type: 'API_REQUEST_SUCCESS',
                         payload: { headers: response.headers, data: response.data },
@@ -80,24 +78,22 @@ function App() {
         });
         return links;
     }
-
     return (
         <React.Fragment>
             <Header />
             <Form className="form" handleApiCall={callApi} />
             <div className="grid-section">
                 <div className="left-section">
-                    <div>Request Method: {state.reqParams.method}</div>
-                    <div>URL: {state.reqParams.url}</div>
+                    <div>Request Method: {reqParams.method}</div>
+                    <div>URL: {reqParams.url}</div>
                 </div>
                 <div className="right-section">
-                    <Results role="result" data={state.respons} loading={state.loading} previousLink={previousLink} nextLink={nextLink} />
-
+                    <Results role="result" data={respons} loading={loading} previousLink={previousLink} nextLink={nextLink} />
                 </div>
                 <div>
                     <History handleApiCall={callApi} data={{
-                        url: state.reqParams.url,
-                        methode: state.reqParams.method
+                        url: reqParams.url,
+                        methode: reqParams.method
                     }} />
                 </div>
             </div>
