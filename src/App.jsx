@@ -19,6 +19,7 @@ const initialState = {
         body: '',
     },
 };
+
 function reducer(state, action) {
     switch (action.type) {
         case 'SET_REQUEST_PARAMS':
