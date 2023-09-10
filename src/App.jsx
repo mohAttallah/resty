@@ -17,6 +17,7 @@ function App() {
 
 
     function callApi(props) {
+        console.log(props)
         dispatch({ type: 'SET_REQUEST_PARAMS', payload: props });
     }
 
@@ -34,16 +35,16 @@ function App() {
             }).then(response => {
                 //check if there is a headers on respons or not 
                 if (response.headers && response.data) {
-                    const nextLinkHeader = response.headers['link'];
-                    if (nextLinkHeader) {
-                        const links = parseLinkHeader(nextLinkHeader);
+                    //check if there is a next url or not  
+                    if (response.data.next) {
                         dispatch({
                             type: 'SET_NEXT_LINK',
-                            payload: { nextLink: links.next },
+                            payload: { nextLink: response.data.next },
                         });
+                        console.log(response.data.next)
                         dispatch({
                             type: 'SET_PREVIOUS_LINK',
-                            payload: { previousLink: links.first },
+                            payload: { previousLink: response.data.previous },
                         });
                     }
                     dispatch({
@@ -67,28 +68,17 @@ function App() {
 
     }, [state.reqParams])
 
-    function parseLinkHeader(linkHeader) {
-        const links = {};
-        linkHeader.split(',').forEach(part => {
-            const section = part.split(';');
-            if (section.length !== 2) return;
-            const url = section[0].replace(/<(.*)>/, '$1').trim();
-            const rel = section[1].replace(/rel="(.*)"/, '$1').trim();
-            links[rel] = url;
-        });
-        return links;
-    }
     return (
         <React.Fragment>
             <Header />
-            <Form className="form" handleApiCall={callApi} />
+            <Form className="form" handleApiCall={callApi} state={state} dispatch={dispatch} />
             <div className="grid-section">
                 <div className="left-section">
                     <div>Request Method: {reqParams.method}</div>
                     <div>URL: {reqParams.url}</div>
                 </div>
                 <div className="right-section">
-                    <Results role="result" data={respons} loading={loading} previousLink={previousLink} nextLink={nextLink} />
+                    <Results role="result" data={respons} loading={loading} previousLink={previousLink} nextLink={nextLink} handleApiCall={callApi} />
                 </div>
                 <div>
                     <History handleApiCall={callApi} data={{
