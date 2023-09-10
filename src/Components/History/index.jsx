@@ -23,6 +23,7 @@ export default function History(props) {
         url: "",
         methode: ""
     }
+
     // const { url, method } = props.data || { url: '', method: '' };
 
     const { url, methode } = props.data;
@@ -32,6 +33,7 @@ export default function History(props) {
             payload: { url, methode }
         });
     }, [props])
+    
     const keys = Object.keys(localStorage);
 
     const handleSendData = (url, methode) => {
@@ -41,9 +43,6 @@ export default function History(props) {
             body: ""
         };
         props.handleApiCall(formData);
-
-        console.log('URL:', url);
-        console.log('Method:', methode);
     };
 
     return (

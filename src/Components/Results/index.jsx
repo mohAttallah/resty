@@ -1,33 +1,28 @@
-import { useState, useEffect } from 'react';
 import './Result.scss';
 
 function Results(props) {
     const { loading, previousLink, nextLink } = props;
     const data = props.data.data;
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 1;
 
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [data]);
-
-    let totalPages
-    //check  data type
-    if (Array.isArray(data)) {
-        totalPages = Math.ceil(data.length / itemsPerPage);
-    }
     //total pages is length / items 
+    const handleSendData = (url, methode) => {
+        console.log(url)
+        const formData = {
+            method: methode,
+            url: url,
+            body: ""
+        };
+        props.handleApiCall(formData);
+    };
 
     function handlePrev() {
-        if (currentPage > 1 && previousLink) {
-            setCurrentPage(currentPage - 1);
-        }
+
+        handleSendData(previousLink, 'GET')
     }
 
     function handleNext() {
-        if (currentPage < totalPages && nextLink) {
-            setCurrentPage(currentPage + 1);
-        }
+
+        handleSendData(nextLink, 'GET')
     }
     let currentData = null;
 
@@ -39,11 +34,6 @@ function Results(props) {
                 <pre className="code-output">Loading...</pre>
             </section>
         );
-    } else if (Array.isArray(data)) {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        currentData = data.slice(startIndex, endIndex);
-
     } else {
         currentData = data
     }

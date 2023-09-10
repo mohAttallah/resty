@@ -1,13 +1,10 @@
 // import React from 'react';
-import { useReducer } from 'react';
 import './Form.scss';
 
-
-import { reducer, initialState } from '../../reducer';
-
-
 function Form(props) {
-    const [state, dispatch] = useReducer(reducer, initialState);
+    console.log()
+    const state = props.state;
+    const dispatch = props.dispatch
     const { selectedMethod, active } = state
 
     const handleSubmit = e => {
